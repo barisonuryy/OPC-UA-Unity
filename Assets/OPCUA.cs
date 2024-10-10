@@ -5,9 +5,11 @@ using Opc.Ua;
 using Opc.Ua.Client;
 using Opc.Ua.Configuration;
 using System.Threading.Tasks;
+using TMPro;
 
 public class OPCUA : MonoBehaviour
 {
+    public List<TMP_Text> tagValueTextMeshProList;
     private List<ObjectMata> matchedTagValues = new List<ObjectMata>();
     private ApplicationInstance application;
     private Session session;
