@@ -1,22 +1,26 @@
-﻿using System;
-using UnityEngine;
-
-[Serializable]
-public class ObjectMata
+﻿public class ObjectMata
 {
-    public string objectName;  // Nesnenin ismi
-    public string objectTag;   // Nesnenin tag'ı
-    public float minValue;     // Minimum değer
+    public string objectTag;
+    public string objectName;
+    public float minValue;
     public float maxValue;
-    public object value;// Maksimum değer
+    public float value;
 
-    public ObjectMata(string name, string tag, float min, float max,float val)
+    // Constructor
+    public ObjectMata(string tag, string name, float minVal, float maxVal, float currentValue)
     {
-        objectName = name;
         objectTag = tag;
-        minValue = min;
-        maxValue = max;
-        value = val;
+        objectName = name;
+        minValue = minVal;
+        maxValue = maxVal;
+        value = currentValue;
+    }
+
+    // ObjectMata değerini güncelle
+    public void Update(float newValue, ObjectData dataComponent)
+    {
+        value = newValue;
+        minValue = dataComponent.minValue;
+        maxValue = dataComponent.maxValue;
     }
 }
-

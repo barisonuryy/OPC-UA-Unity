@@ -1,53 +1,52 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Xml;
 using UnityEngine;
+using Newtonsoft.Json;
+
+
 
 public class JsonHandler : MonoBehaviour
 {
     private string filePath;
 
-    void Start()
+    private void Start()
     {
-        filePath = Application.persistentDataPath + "/ObjectData.json";
+        // JSON dosyasının yolunu belirleyin
+        filePath = Path.Combine(Application.persistentDataPath, "ObjectData.json");
     }
 
     public void SaveObjectDataToJson(List<ObjectMata> objectDataList)
     {
-        string jsonData = JsonUtility.ToJson(new ObjectDataList { objectData = objectDataList }, true);
-        File.WriteAllText(filePath, jsonData);
-        Debug.Log($"Data saved to {filePath}");
+        // ObjectMata listesini JSON formatına dönüştür
+        string json = JsonConvert.SerializeObject(objectDataList, Newtonsoft.Json.Formatting.Indented);
+
+        // JSON'u belirtilen dosyaya yaz
+        File.WriteAllText(filePath, json);
+
+        Debug.Log("Data saved to JSON file: " + filePath);
     }
-    public ObjectMata GetObjectDataFromJson(string objectName)
+
+    public List<ObjectMata> LoadObjectDataFromJson()
     {
+        // Eğer dosya varsa, JSON'dan veriyi yükle
         if (File.Exists(filePath))
         {
-            string jsonData = File.ReadAllText(filePath);
-            ObjectDataList objectDataList = JsonUtility.FromJson<ObjectDataList>(jsonData);
-
-            // Find the specific ObjectMata by object name
-            ObjectMata objectData = objectDataList.objectData.Find(data => data.objectName == objectName);
-
-            if (objectData != null)
-            {
-                Debug.Log($"Data found for object: {objectName}");
-                return objectData;  // Return the found ObjectMata
-            }
-            else
-            {
-                Debug.LogWarning($"No data found for object: {objectName}");
-                return null;  // Return null if not found
-            }
+            string json = File.ReadAllText(filePath);
+            List<ObjectMata> objectDataList = JsonConvert.DeserializeObject<List<ObjectMata>>(json);
+            return objectDataList;
         }
         else
         {
-            Debug.LogWarning("No JSON file found.");
-            return null;  // Return null if no file exists
+            Debug.LogError("JSON file not found at: " + filePath);
+            return null;
         }
     }
+}
 
-    [System.Serializable]
+[System.Serializable]
     public class ObjectDataList
     {
         public List<ObjectMata> objectData;
     }
-}
